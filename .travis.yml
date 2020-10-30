@@ -76,7 +76,7 @@ cache:
 
 addons:
   ssh_known_hosts:
-    - 'HOST_IP' #受信主机，你的Linux服务器ip
+    - '$HOST_IP' #受信主机，你的Linux服务器ip
 before_install:
   - openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv
     -in id_rsa.enc -out ~/.ssh/id_rsa -d
@@ -89,7 +89,7 @@ script:
 
 #after_script前5句是把部署分支的.git文件夹保护起来，用于保留历史部署的commit日志，否则部署分支永远只有一条commit记录。
 #命令里面的变量都是在Travis CI里配置过的。
-after_script:
+after_success:
   - docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
   - docker build -t hospitalfrontend .
   - docker images
@@ -97,9 +97,9 @@ after_script:
   - docker push $DOCKER_USERNAME/his:lastest
 
 # E: Build LifeCycle
-after_success:
+after_script:
   - chmod 600 ~/.ssh/id_rsa   #还是Linux文件权限问题
-  - ssh travis@HOST_IP -o StrictHostKeyChecking=no './build/deploy.sh'   #使用ssh连接服务器
+  - ssh travis@$HOST_IP -o StrictHostKeyChecking=no './build/deploy.sh'   #使用ssh连接服务器
 
 branches:
   only:
