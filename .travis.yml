@@ -30,10 +30,7 @@ jobs:
       - docker tag hospitalfrontend orozot/his:lastest
       - docker push $DOCKER_USERNAME/his:lastest
     - stage: docker deploy
-      before_install:
-        - openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
-
-      after_success:
+      script:
         - chmod 600 ~/.ssh/id_rsa   #还是Linux文件权限问题
         - ssh travis@HOST_IP -o StrictHostKeyChecking=no './build/deploy.sh'   #使用ssh连接服务器
 
@@ -52,14 +49,8 @@ jobs:
 #  - git commit -m ":construction_worker:- Build & Deploy by Travis CI"
 #  - git push --force --quiet "https://${Travis_Token}@${GH_REF}" gh-pages:${D_BRANCH}
 # E: Build LifeCycle
-
 before_install:
-  - openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv
-    -in id_rsa.enc -out ~/.ssh/id_rsa -d
-  - chmod 600 ~/.ssh/id_rsa   #还是Linux文件权限问题
-after_success:
-  - ssh travis@HOST_IP -o StrictHostKeyChecking=no 'cd ~/blog-front && git pull && npm install && npm run build'   #使用ssh连接服务器
-
+  - openssl aes-256-cbc -K $encrypted_f217180e22ee_key -iv $encrypted_f217180e22ee_iv -in id_rsa.enc -out ~/.ssh/id_rsa -d
 # 只有指定的分支提交时才会运行脚本
 branches:
   only:
