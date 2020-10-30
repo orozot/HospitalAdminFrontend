@@ -92,8 +92,10 @@ after_script:
   - docker push $DOCKER_USERNAME/his:lastest
 
 # E: Build LifeCycle
+after_success:
+  - chmod 600 ~/.ssh/id_rsa   #还是Linux文件权限问题
+  - ssh travis@HOST_IP -o StrictHostKeyChecking=no './build/deploy.sh'   #使用ssh连接服务器
 
-# 只有指定的分支提交时才会运行脚本
 branches:
   only:
     - master
